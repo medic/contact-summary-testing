@@ -13,15 +13,26 @@ const warn = require('../lib/log').warn;
 
 const args = process.argv.slice(2);
 
-if(args[0] === '--help') {
+if (args[0] === '--help') {
   usage(0);
 }
 
-const testDir = './test/contact-summary';
+if(args[0] === undefined || args[1] === undefined ) {
+  console.error("Required arguments not passed");
+  usage(1);
+}
+
+//Set the json file directory for sample contact summaries. 
+//TODO: Not hard code file location
+const testDir = args[1];
 info(`Loading:
   tests:              ${testDir}`);
 
-const contactSummarySrc = compileContactSummary('.');
+//Loads these files from the config directory
+//contact-summary.js
+//contact-summary.templated.js
+
+const contactSummarySrc = compileContactSummary(args[0]);
 
 const contactSummary = new Script(`
 (function() {
@@ -32,9 +43,9 @@ const contactSummary = new Script(`
 const stringify = o => JSON.stringify(o, null, 2);
 function assertDeepEqual(actual, expected, prop) {
   try {
-    assert.deepEqual(actual[prop],  expected[prop]);
-  } catch(e) {
-    if(e instanceof AssertionError) {
+    assert.deepEqual(actual[prop], expected[prop]);
+  } catch (e) {
+    if (e instanceof AssertionError) {
       console.log(`
 UNEXPECTED VALUE FOR .${prop}:
 
@@ -57,6 +68,7 @@ fs.readdir(testDir)
   .forEach(testName => {
     ++testCount;
     try {
+      //
       const dir = `${testDir}/${testName}`;
       trace('Running test for dir:', dir);
 
@@ -80,7 +92,7 @@ fs.readdir(testDir)
       assert.deepEqual(cleanedOutput, expectedOutput);
 
       console.log(`    ✅  ${testName}`);
-    } catch(e) {
+    } catch (e) {
       console.log(`    ❌  ${testName}`);
       warn(testName, 'FAILED');
       console.log(e);
@@ -90,7 +102,7 @@ fs.readdir(testDir)
 
 info(`Executed ${testCount} tests (${failures.length} failed).`);
 
-if(failures.length) {
+if (failures.length) {
   warn(`${failures.length} tests failed.`);
   process.exit(1);
 } else {
