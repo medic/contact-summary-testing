@@ -12,7 +12,7 @@
   "scripts": {
     "jshint": "jshint src/**/*.js",
     "release": "git push && git tag v$(jq -r .version package.json) && git push --tags && npm publish --access=public",
-    "test": "npm run jshint && (cd test/smoke && ../../src/bin/contact-summary-test)"
+    "test": "npm run jshint && (cd test/smoke && ../../src/bin/contact-summary-test . ./contact-summary)"
   },
   "dependencies": {
     "chai": "^4.1.2",

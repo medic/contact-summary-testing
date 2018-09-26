@@ -17,11 +17,16 @@ if(args[0] === '--help') {
   usage(0);
 }
 
-const testDir = './test/contact-summary';
+if(args[0] === undefined || args[1] === undefined ) {
+  console.error("Required arguments not passed");
+  usage(1);
+}
+
+const testDir = args[1];
 info(`Loading:
   tests:              ${testDir}`);
 
-const contactSummarySrc = compileContactSummary('.');
+const contactSummarySrc = compileContactSummary(args[0]);
 
 const contactSummary = new Script(`
 (function() {
