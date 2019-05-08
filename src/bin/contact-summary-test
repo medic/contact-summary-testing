@@ -3,9 +3,11 @@ const chai = require('chai')
 const assert = chai.assert;
 const AssertionError = require('assertion-error');
 const compileContactSummary = require('medic-conf/src/lib/compile-contact-summary');
+const log = require('medic-conf/src/lib/log');
+log.level = log.LEVEL_INFO;
+
 const fs = require('../lib/sync-fs');
 const info = require('../lib/log').info;
-const readTemplatedJs = require('medic-conf/src/lib/templated-js');
 const Script = require('vm').Script;
 const trace = require('../lib/log').trace;
 const usage = require('../cli/usage');

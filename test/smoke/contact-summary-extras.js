@@ -172,11 +172,11 @@ var isNonFacilityDelivery = function(r) {
          r.fields.delivery_code.toLowerCase() !== 'f';
 };
 
-var getBirthDate = function(r) {
+function getBirthDate(r) {
   var rawDate = r &&
       (r.birth_date || r.fields.birth_date || r.reported_date);
   return new Date(rawDate);
-};
+}
 
 var getPNCperiod = function(deliveryReport) {
   // Find PNC period based on delivery date, not reported date
@@ -363,3 +363,34 @@ function getSubsequentVisits(r) {
   });
   return subsequentVisits;
 }
+
+module.exports = {
+  now: now,
+  MS_IN_DAY: MS_IN_DAY,
+  DAYS_IN_PNC: DAYS_IN_PNC,
+  
+  antenatalForms: antenatalForms,
+  postnatalForms: postnatalForms,
+  immunizationForms: immunizationForms,
+  IMMUNIZATION_LIST: IMMUNIZATION_LIST,
+  isVaccineInLineage: isVaccineInLineage,
+  isHighRiskPregnancy: isHighRiskPregnancy,
+  isHighRiskPostnatal: isHighRiskPostnatal,
+  getDeliveryCode: getDeliveryCode,
+  initImmunizations: initImmunizations,
+  countDosesReceived: countDosesReceived,
+  countDosesPossible: countDosesPossible,
+  isSingleDose: isSingleDose,
+  countReportsSubmittedInWindow: countReportsSubmittedInWindow,
+  isActivePregnancy: isActivePregnancy,
+  getAgeInMonths: getAgeInMonths,
+  getSubsequentVisits: getSubsequentVisits,
+
+  isCoveredByUseCaseInLineage: isCoveredByUseCaseInLineage,
+  isFacilityDelivery: isFacilityDelivery,
+  getBirthDate: getBirthDate,
+  addImmunizations: addImmunizations,
+  getOldestReport: getOldestReport,
+  getNewestDelivery: getNewestDelivery,
+  getNewestPncPeriod: getNewestPncPeriod,
+};
