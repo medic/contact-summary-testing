@@ -172,11 +172,11 @@ var isNonFacilityDelivery = function(r) {
          r.fields.delivery_code.toLowerCase() !== 'f';
 };
 
-var getBirthDate = function(r) {
+function getBirthDate(r) {
   var rawDate = r &&
       (r.birth_date || r.fields.birth_date || r.reported_date);
   return new Date(rawDate);
-};
+}
 
 var getPNCperiod = function(deliveryReport) {
   // Find PNC period based on delivery date, not reported date
