@@ -1,13 +1,17 @@
-var now = extras.now;
-var MS_IN_DAY = extras.MS_IN_DAY;
-var DAYS_IN_PNC = extras.DAYS_IN_PNC;
-var isCoveredByUseCaseInLineage = extras.isCoveredByUseCaseInLineage;
-var isFacilityDelivery = extras.isFacilityDelivery;
-var getBirthDate = extras.getBirthDate;
-var addImmunizations = extras.addImmunizations;
-var getOldestReport = extras.getOldestReport;
-var getNewestDelivery = extras.getNewestDelivery;
-var getNewestPncPeriod = extras.getNewestPncPeriod;
+const extras = require('./contact-summary-extras');
+const {
+  now,
+  MS_IN_DAY,
+  DAYS_IN_PNC,
+  isCoveredByUseCaseInLineage,
+  isFacilityDelivery,
+  isReportValid,
+  getBirthDate,
+  addImmunizations,
+  getOldestReport,
+  getNewestDelivery,
+  getNewestPncPeriod,
+} = extras;
 
 var context = {
   use_cases: {

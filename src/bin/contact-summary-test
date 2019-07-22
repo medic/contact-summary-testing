@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-const chai = require('chai')
-const assert = chai.assert;
+const path = require('path');
+const { assert } = require('chai')
 const AssertionError = require('assertion-error');
-const compileContactSummary = require('medic-conf/src/lib/compile-contact-summary');
-const log = require('medic-conf/src/lib/log');
+const compileContactSummary = require('@kennsippell/medic-conf/src/lib/compile-contact-summary');
+const log = require('@kennsippell/medic-conf/src/lib/log');
 log.level = log.LEVEL_INFO;
 
 const fs = require('../lib/sync-fs');
@@ -28,78 +28,81 @@ const testDir = args[1];
 info(`Loading:
   tests:              ${testDir}`);
 
-const contactSummarySrc = compileContactSummary(args[0]);
+(async () => {
+  const pathToProject = path.resolve(args[0]);
+  const contactSummarySrc = await compileContactSummary(pathToProject);
 
-const contactSummary = new Script(`
-(function() {
-  ${contactSummarySrc}
-}())
-`);
+  const contactSummary = new Script(`
+  (function() {
+    ${contactSummarySrc}
+  }())
+  `);
 
-const stringify = o => JSON.stringify(o, null, 2);
-function assertDeepEqual(actual, expected, prop) {
-  try {
-    assert.deepEqual(actual[prop],  expected[prop]);
-  } catch(e) {
-    if(e instanceof AssertionError) {
-      console.log(`
-UNEXPECTED VALUE FOR .${prop}:
-
-EXPECTED:
-${stringify(expected)}
-
-ACTUAL:
-${stringify(actual)}
-      `);
-    }
-    throw e;
-  }
-}
-
-const failures = [];
-let testCount = 0;
-
-fs.readdir(testDir)
-  .filter(name => fs.isDirectory(`${testDir}/${name}`))
-  .forEach(testName => {
-    ++testCount;
+  const stringify = o => JSON.stringify(o, null, 2);
+  function assertDeepEqual(actual, expected, prop) {
     try {
-      const dir = `${testDir}/${testName}`;
-      trace('Running test for dir:', dir);
-
-      const expectedOutput = fs.readJson(`${dir}/expected-output.json`);
-
-      const testContext = {
-        contact: fs.readJson(`${dir}/contact.json`),
-        lineage: fs.readJson(`${dir}/lineage.json`),
-        reports: fs.readJson(`${dir}/reports.json`),
-      };
-      const actualOutput = contactSummary.runInNewContext(testContext);
-
-      // reparse actual output to remove undefined values
-      const cleanedOutput = JSON.parse(JSON.stringify(actualOutput));
-
-      // compare inidividual properties first for better diffs
-      assertDeepEqual(cleanedOutput, expectedOutput, 'fields');
-      assertDeepEqual(cleanedOutput, expectedOutput, 'cards');
-      assertDeepEqual(cleanedOutput, expectedOutput, 'context');
-
-      assert.deepEqual(cleanedOutput, expectedOutput);
-
-      console.log(`    ✅  ${testName}`);
+      assert.deepEqual(actual[prop],  expected[prop]);
     } catch(e) {
-      console.log(`    ❌  ${testName}`);
-      warn(testName, 'FAILED');
-      console.log(e);
-      failures.push(testName);
+      if(e instanceof AssertionError) {
+        console.log(`
+  UNEXPECTED VALUE FOR .${prop}:
+
+  EXPECTED:
+  ${stringify(expected)}
+
+  ACTUAL:
+  ${stringify(actual)}
+        `);
+      }
+      throw e;
     }
-  });
+  }
 
-info(`Executed ${testCount} tests (${failures.length} failed).`);
+  const failures = [];
+  let testCount = 0;
 
-if(failures.length) {
-  warn(`${failures.length} tests failed.`);
-  process.exit(1);
-} else {
-  info('All tests passed :¬)');
-}
+  fs.readdir(testDir)
+    .filter(name => fs.isDirectory(`${testDir}/${name}`))
+    .forEach(testName => {
+      ++testCount;
+      try {
+        const dir = `${testDir}/${testName}`;
+        trace('Running test for dir:', dir);
+
+        const expectedOutput = fs.readJson(`${dir}/expected-output.json`);
+
+        const testContext = {
+          contact: fs.readJson(`${dir}/contact.json`),
+          lineage: fs.readJson(`${dir}/lineage.json`),
+          reports: fs.readJson(`${dir}/reports.json`),
+        };
+        const actualOutput = contactSummary.runInNewContext(testContext);
+
+        // reparse actual output to remove undefined values
+        const cleanedOutput = JSON.parse(JSON.stringify(actualOutput));
+
+        // compare inidividual properties first for better diffs
+        assertDeepEqual(cleanedOutput, expectedOutput, 'fields');
+        assertDeepEqual(cleanedOutput, expectedOutput, 'cards');
+        assertDeepEqual(cleanedOutput, expectedOutput, 'context');
+  
+        assert.deepEqual(cleanedOutput, expectedOutput);
+  
+        console.log(`    ✅  ${testName}`);
+      } catch(e) {
+        console.log(`    ❌  ${testName}`);
+        warn(testName, 'FAILED');
+        console.log(e);
+        failures.push(testName);
+      }
+    });
+
+  info(`Executed ${testCount} tests (${failures.length} failed).`);
+
+  if(failures.length) {
+    warn(`${failures.length} tests failed.`);
+    process.exit(1);
+  } else {
+    info('All tests passed :¬)');
+  }
+})();

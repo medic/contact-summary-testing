@@ -125,6 +125,12 @@ var IMMUNIZATION_LIST = [
   'yellow_fever'
 ];
 
+function isReportValid(report) {
+  // valid XForms won't have .errors field
+  // valid JSON forms will have empty array errors:[]
+  return report && !(report.errors && report.errors.length);
+}
+
 function count(arr, fn) {
   var c = 0;
   for(var i=0; i<arr.length; ++i) {
@@ -148,14 +154,6 @@ var isCoveredByUseCaseInLineage = function(lineage, usecase) {
 function contains(str, v) {
   return str && str.split(' ').indexOf(v) !== -1;
 }
-
-// This function is now broken. Since #2635 the parent does not have the fields populated.
-// Use isCoveredByUseCaseInLineage() instead until contact is hydrated
-var isCoveredByUseCase = function(contact, usecase) {
-  return contact &&
-      (contains(contact.use_cases, usecase) ||
-          isCoveredByUseCase(contact.parent, usecase));
-};
 
 var isFacilityDelivery = function(r) {
   return r &&
@@ -365,32 +363,33 @@ function getSubsequentVisits(r) {
 }
 
 module.exports = {
-  now: now,
-  MS_IN_DAY: MS_IN_DAY,
-  DAYS_IN_PNC: DAYS_IN_PNC,
+  isReportValid,
+  now,
+  MS_IN_DAY,
+  DAYS_IN_PNC,
   
-  antenatalForms: antenatalForms,
-  postnatalForms: postnatalForms,
-  immunizationForms: immunizationForms,
-  IMMUNIZATION_LIST: IMMUNIZATION_LIST,
-  isVaccineInLineage: isVaccineInLineage,
-  isHighRiskPregnancy: isHighRiskPregnancy,
-  isHighRiskPostnatal: isHighRiskPostnatal,
-  getDeliveryCode: getDeliveryCode,
-  initImmunizations: initImmunizations,
-  countDosesReceived: countDosesReceived,
-  countDosesPossible: countDosesPossible,
-  isSingleDose: isSingleDose,
-  countReportsSubmittedInWindow: countReportsSubmittedInWindow,
-  isActivePregnancy: isActivePregnancy,
-  getAgeInMonths: getAgeInMonths,
-  getSubsequentVisits: getSubsequentVisits,
+  antenatalForms,
+  postnatalForms,
+  immunizationForms,
+  IMMUNIZATION_LIST,
+  isVaccineInLineage,
+  isHighRiskPregnancy,
+  isHighRiskPostnatal,
+  getDeliveryCode,
+  initImmunizations,
+  countDosesReceived,
+  countDosesPossible,
+  isSingleDose,
+  countReportsSubmittedInWindow,
+  isActivePregnancy,
+  getAgeInMonths,
+  getSubsequentVisits,
 
-  isCoveredByUseCaseInLineage: isCoveredByUseCaseInLineage,
-  isFacilityDelivery: isFacilityDelivery,
-  getBirthDate: getBirthDate,
-  addImmunizations: addImmunizations,
-  getOldestReport: getOldestReport,
-  getNewestDelivery: getNewestDelivery,
-  getNewestPncPeriod: getNewestPncPeriod,
+  isCoveredByUseCaseInLineage,
+  isFacilityDelivery,
+  getBirthDate,
+  addImmunizations,
+  getOldestReport,
+  getNewestDelivery,
+  getNewestPncPeriod,
 };
