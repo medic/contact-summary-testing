@@ -1,6 +1,6 @@
 {
   "name": "@medic/contact-summary-testing",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -15,7 +15,7 @@
     "test": "npm run jshint && (cd test/smoke && ../../src/bin/contact-summary-test . ./contact-summary)"
   },
   "dependencies": {
-    "@kennsippell/medic-conf": "^3.0.3",
+    "medic-conf": "^3.0.0",
     "chai": "^4.1.2",
     "mkdirp": "^0.5.1",
     "redact-basic-auth": "^1.0.0"

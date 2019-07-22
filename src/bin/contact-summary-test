@@ -2,8 +2,8 @@
 const path = require('path');
 const { assert } = require('chai')
 const AssertionError = require('assertion-error');
-const compileContactSummary = require('@kennsippell/medic-conf/src/lib/compile-contact-summary');
-const log = require('@kennsippell/medic-conf/src/lib/log');
+const compileContactSummary = require('medic-conf/src/lib/compile-contact-summary');
+const log = require('medic-conf/src/lib/log');
 log.level = log.LEVEL_INFO;
 
 const fs = require('../lib/sync-fs');
